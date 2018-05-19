@@ -1,0 +1,15 @@
+{
+  "name": "starlow2",
+  "version": "1.0.0",
+  "description": "Starlow 2.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bennyman123abc",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "discord.js": "^11.3.2"
+  }
+}
