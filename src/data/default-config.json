@@ -1,0 +1,11 @@
+{
+    "general": {
+        "token": "Token goes here!",
+        "command-invoker": "*"
+    },
+
+    "logging": {
+        "messages": false,
+        "commands": true
+    }
+}
