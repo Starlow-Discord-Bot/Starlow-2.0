@@ -14,9 +14,19 @@ fs.isDirSync = (path) => {
     }
 }
 
-Discord.User.prototype.getPerms = (server) => {
+getPerms = (user, server) => {
     try {
-        return Config.getUserConfig(this.id, server)['permissions'];
+        var globalUserConfig = Config.getGlobalUserConfig(user);
+        var userConfig = Config.getUserConfig(user, server);
+        userConfig.permissions = globalUserConfig.permission_override;
+        Config.writeUserConfig(user, server, userConfig);
+    }
+    catch(e) {
+        console.log(e);
+    }
+
+    try {
+        return Config.getUserConfig(user, server).permissions;
     }
     catch(e) {
         return -1;
@@ -37,11 +47,11 @@ var commands = new Discord.Collection();
 function initCommands() {
     fs.readdirSync("./src/commands").forEach((command) => {
         try {
+            var commandName = command;
             var command = require(`./src/commands/${command}`);
         }
         catch(e) {
             console.log(`Error loading command, '${command}'.`);
-            console.log(e)
             return;
         }
 
@@ -49,8 +59,7 @@ function initCommands() {
             command = new command();
         }
         catch(e) {
-            console.log(`Error initializing command, '${command}'.`)
-            console.log(e)
+            console.log(`Error initializing command, '${commandName}'.`)
             return;
         }
 
@@ -58,6 +67,11 @@ function initCommands() {
 
         commands.set(command.data.name, command);
     });
+}
+
+function reloadCommands() {
+    commands = new Discord.Collection();
+    initCommands();
 }
 
 client.on("message", async (message) => {
@@ -70,22 +84,22 @@ client.on("message", async (message) => {
     if (!command) {
         return;
     }
-    if (message.author.getPerms() < command.data.permissions) {
+    if (getPerms(message.author.id, message.guild.id) < command.data.permissions) {
         return; // TODO: Handle this as a no permissions error
     }
     try {
         command.run(message, args);
     }
     catch(e) {
-        message.reply(`An error has occurred while running this command: ${e}\nYou should never see this error! Please contact bennyman123abc#1417 to report this error!`)
+        message.reply(`An error has occurred while running this command: \n\`${e}\`\nYou should never see this error! Please contact bennyman123abc#1417 to report this error!`)
     }
 });
 
 client.on("ready", async () => {
     initCommands();
-    console.log(client.user.name);
+    console.log(client.user.username);
     console.log(client.user.id);
-    client.user.setPresence({game: {name: "Loaded!"}});
+    client.user.setPresence({game: {name: "*help"}});
 });
 
 if (config["general"]["token"]) {
@@ -93,4 +107,9 @@ if (config["general"]["token"]) {
 }
 else {
     console.log(`Bot token not available!`);
+}
+
+module.exports = {
+    commands: commands,
+    client: client
 }

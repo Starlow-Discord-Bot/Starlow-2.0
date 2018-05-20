@@ -12,7 +12,7 @@ class TestCommand {
     }
 
     run(message, args) {
-        message.reply("Test");
+        message.channel.send("Test");
     }
 }
 

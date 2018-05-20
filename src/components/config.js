@@ -31,19 +31,49 @@ var getServerConfig = (server) => {
 }
 
 var writeServerConfig = (server, modifiedConfig) => {
-
+    try {
+        fs.writeFileSync(`./config/users/${server}/config.json`, JSON.stringify(modifiedConfig, null, 4));
+        return true;
+    }
+    catch(e) {
+        return false;
+    }
 }
 
 var generateGlobalUserConfig = (user) => {
-
+    if (!fs.isDirSync('./config/users')) {
+        fs.mkdirSync('./config/users');
+    }
+    if (!fs.isDirSync(`./config/users/global`)) {
+        fs.mkdirSync(`./config/users/global`);
+    }
+    fs.copyFileSync('./src/data/default-globaluserconfig.json', `./config/users/global/${user}.json`);
 }
 
 var getGlobalUserConfig = (user) => {
+    if (!fs.isDirSync('./config/users')) {
+        fs.mkdirSync('./config/users');
+    }
+    if (!fs.isDirSync(`./config/users/global`)) {
+        generateGlobalUserConfig(user);
+    }
 
+    try {
+        return JSON.parse(fs.readFileSync(`./config/users/global/${user}.json`));
+    }
+    catch(e) {
+        return generateGlobalUserConfig(user);
+    }
 }
 
 var writeGlobalUserConfig = (user, modifiedConfig) => {
-
+    try {
+        fs.writeFileSync(`./config/users/global/${user}.json`, JSON.stringify(modifiedConfig, null, 4));
+        return true;
+    }
+    catch(e) {
+        return false;
+    }
 }
 
 var generateUserConfig = (user, server) => {
@@ -122,7 +152,6 @@ var init = () => {
     }
 
     if (!fs.existsSync("./config/config.json")) {
-        console.log("lol");
         generateConfig();
     }
 }
@@ -134,5 +163,7 @@ module.exports = {
     getUserConfig: getUserConfig,
     writeUserConfig: writeUserConfig,
     getServerConfig: getServerConfig,
-    writeServerConfig: writeServerConfig
+    writeServerConfig: writeServerConfig,
+    getGlobalUserConfig: getGlobalUserConfig,
+    writeGlobalUserConfig: writeGlobalUserConfig
 }
