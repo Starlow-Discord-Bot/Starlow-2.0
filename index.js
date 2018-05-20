@@ -19,10 +19,12 @@ getPerms = (user, server) => {
         var globalUserConfig = Config.getGlobalUserConfig(user);
         var userConfig = Config.getUserConfig(user, server);
         if (user.bot) {
-            globalUserConfig.permission_override = 1;
+            globalUserConfig.permission_override = Permissions.BOT;
             Config.writeGlobalUserConfig(user, globalUserConfig);
         }
-        userConfig.permissions = globalUserConfig.permission_override;
+        if (globalUserConfig.permission_override) {
+            userConfig.permissions = globalUserConfig.permission_override;
+        }
         Config.writeUserConfig(user, server, userConfig);
     }
     catch(e) {
@@ -90,6 +92,14 @@ client.on("message", async (message) => {
     }
     if (getPerms(message.author.id, message.guild.id) < command.data.permissions) {
         return; // TODO: Handle this as a no permissions error
+    }
+    if (message.author.bot) {
+        var user = message.author.id;
+        var server = message.guild.id;
+        var userConfig = Config.getUserConfig(user, server);
+        userConfig.permissions = Permissions.BOT;
+        Config.writeUserConfig(user, server, userConfig);
+        return;
     }
     try {
         command.run(message, args);
