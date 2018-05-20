@@ -18,6 +18,10 @@ getPerms = (user, server) => {
     try {
         var globalUserConfig = Config.getGlobalUserConfig(user);
         var userConfig = Config.getUserConfig(user, server);
+        if (user.bot) {
+            globalUserConfig.permission_override = 1;
+            Config.writeGlobalUserConfig(user, globalUserConfig);
+        }
         userConfig.permissions = globalUserConfig.permission_override;
         Config.writeUserConfig(user, server, userConfig);
     }
