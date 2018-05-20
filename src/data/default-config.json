@@ -1,6 +1,6 @@
 {
     "general": {
-        "token": "Token goes here!",
+        "token": "",
         "command-invoker": "*"
     },
 

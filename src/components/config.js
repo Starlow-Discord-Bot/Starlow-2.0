@@ -16,7 +16,18 @@ var generateServerConfig = (server) => {
 }
 
 var getServerConfig = (server) => {
-
+    if (!fs.isDirSync('./config/users')) {
+        fs.mkdirSync('./config/users');
+    }
+    if (!fs.isDirSync(`./config/users/${server}`)) {
+        generateServerConfig(server);
+    }
+    try {
+        return JSON.parse(fs.readFileSync(`./config/users/${server}/config.json`));
+    }
+    catch(e) {
+        generateServerConfig(server);
+    }
 }
 
 var writeServerConfig = (server, modifiedConfig) => {
@@ -68,7 +79,13 @@ var getUserConfig = (user, server) => {
 }
 
 var writeUserConfig = (user, server, modifiedConfig) => {
-
+    try {
+        fs.writeFileSync(`./config/users/${server}/${user}.json`, JSON.stringify(modifiedConfig, null, 4));
+        return true;
+    }
+    catch(e) {
+        return false;
+    }
 }
 
 var generateConfig = () => {
@@ -104,7 +121,8 @@ var init = () => {
         fs.mkdirSync("./config");
     }
 
-    if (!fs.exists("./config/config.json")) {
+    if (!fs.existsSync("./config/config.json")) {
+        console.log("lol");
         generateConfig();
     }
 }
@@ -112,5 +130,9 @@ var init = () => {
 module.exports = {
     init: init,
     getConfig: getConfig,
-    writeConfig: writeConfig
+    writeConfig: writeConfig,
+    getUserConfig: getUserConfig,
+    writeUserConfig: writeUserConfig,
+    getServerConfig: getServerConfig,
+    writeServerConfig: writeServerConfig
 }

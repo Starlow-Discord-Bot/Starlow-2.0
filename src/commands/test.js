@@ -1,4 +1,4 @@
-var Permissions = require("./src/data/permissions.js");
+var Permissions = require("../data/permissions.js");
 
 class TestCommand {
     constructor() {
@@ -15,3 +15,5 @@ class TestCommand {
         message.reply("Test");
     }
 }
+
+module.exports = TestCommand;
