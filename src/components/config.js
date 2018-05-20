@@ -157,13 +157,13 @@ var init = () => {
 }
 
 module.exports = {
-    init: init,
-    getConfig: getConfig,
-    writeConfig: writeConfig,
-    getUserConfig: getUserConfig,
-    writeUserConfig: writeUserConfig,
-    getServerConfig: getServerConfig,
-    writeServerConfig: writeServerConfig,
-    getGlobalUserConfig: getGlobalUserConfig,
-    writeGlobalUserConfig: writeGlobalUserConfig
+    init,
+    getConfig,
+    writeConfig,
+    getUserConfig,
+    writeUserConfig,
+    getServerConfig,
+    writeServerConfig,
+    getGlobalUserConfig,
+    writeGlobalUserConfig
 }
